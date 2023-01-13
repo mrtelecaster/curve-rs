@@ -3,7 +3,8 @@
 
 use bevy::prelude::Vec3;
 
-mod line;
+mod arc; pub use arc::Arc;
+mod line; pub use line::LinearCurve;
 
 #[cfg(test)]
 mod vec;

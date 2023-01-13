@@ -1,3 +1,4 @@
+use std::ops::Neg;
 use bevy::prelude::Vec3;
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
@@ -11,10 +12,23 @@ pub struct ApproxVec { vec: Vec3 }
 
 impl ApproxVec {
 
+	pub const ZERO: Self = Self::splat(0.0);
+
+	pub const X: Self = Self::new(1.0, 0.0, 0.0);
+
+	pub const Y: Self = Self::new(0.0, 1.0, 0.0);
+
+	pub const Z: Self = Self::new(0.0, 0.0, 1.0);
+
 	/// Creates a new vector with the given X, Y, and Z values
 	#[inline]
-	pub fn new(x: f32, y: f32, z: f32) -> Self {
+	pub const fn new(x: f32, y: f32, z: f32) -> Self {
 		Self{ vec: Vec3::new(x, y, z) }
+	}
+
+	#[inline]
+	pub const fn splat(val: f32) -> Self {
+		Self{ vec: Vec3::splat(val) }
 	}
 }
 
@@ -27,6 +41,15 @@ impl From<Vec3> for ApproxVec {
 impl From<&Vec3> for ApproxVec {
     fn from(v: &Vec3) -> Self {
         Self{ vec: v.clone() }
+    }
+}
+
+impl Neg for ApproxVec {
+
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self{ vec: -self.vec }
     }
 }
 
@@ -72,7 +95,6 @@ impl UlpsEq for ApproxVec {
 }
 
 
-#[cfg(test)]
 mod tests {
 
 	mod traits {
