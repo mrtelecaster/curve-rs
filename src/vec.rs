@@ -3,6 +3,7 @@ use bevy::prelude::Vec3;
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 
 
+
 /// Wrapper type around a [Bevy engine `Vec3`](Vec3) that supports approximate comparison using
 /// [the `approx` crate](approx)
 /// 
@@ -95,6 +96,8 @@ impl UlpsEq for ApproxVec {
 }
 
 
+
+#[cfg(test)]
 mod tests {
 
 	mod traits {

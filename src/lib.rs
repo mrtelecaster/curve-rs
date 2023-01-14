@@ -5,9 +5,7 @@ use bevy::prelude::Vec3;
 
 mod arc; pub use arc::Arc;
 mod line; pub use line::LinearCurve;
-
-#[cfg(test)]
-mod vec;
+mod vec; pub use vec::ApproxVec;
 
 
 /// A curve that can be smoothly interpolated over

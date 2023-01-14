@@ -1,9 +1,10 @@
-use approx::ulps_eq;
+use approx::{AbsDiffEq, RelativeEq, UlpsEq, ulps_eq};
 use bevy::prelude::*;
-use crate::Curve;
+use crate::{Curve, ApproxVec};
 
 
 /// Represents a circular segment
+#[derive(Debug, PartialEq)]
 pub struct Arc {
 	center: Vec3,
 	axis1: Vec3,
@@ -76,6 +77,54 @@ impl Curve for Arc {
 
     fn real_length(&self) -> f32 {
         self.arc_len
+    }
+}
+
+impl AbsDiffEq for Arc {
+
+    type Epsilon = f32;
+
+    fn default_epsilon() -> Self::Epsilon {
+        Self::Epsilon::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
+        self.center.abs_diff_eq(other.center, epsilon)
+		&& self.axis1.abs_diff_eq(other.axis1, epsilon)
+		&& self.axis2.abs_diff_eq(other.axis2, epsilon)
+		&& self.radius.abs_diff_eq(&other.radius, epsilon)
+		&& self.angle.abs_diff_eq(&other.angle, epsilon)
+		&& self.arc_len.abs_diff_eq(&other.arc_len, epsilon)
+    }
+}
+
+impl RelativeEq for Arc {
+    fn default_max_relative() -> Self::Epsilon {
+        Self::Epsilon::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, epsilon: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        ApproxVec::from(self.center).relative_eq(&ApproxVec::from(other.center), epsilon, max_relative)
+		&& ApproxVec::from(self.axis1).relative_eq(&ApproxVec::from(other.axis1), epsilon, max_relative)
+		&& ApproxVec::from(self.axis2).relative_eq(&ApproxVec::from(other.axis2), epsilon, max_relative)
+		&& self.radius.relative_eq(&other.radius, epsilon, max_relative)
+		&& self.angle.relative_eq(&other.angle, epsilon, max_relative)
+		&& self.arc_len.relative_eq(&other.arc_len, epsilon, max_relative)
+    }
+}
+
+impl UlpsEq for Arc {
+    fn default_max_ulps() -> u32 {
+        Self::Epsilon::default_max_ulps()
+    }
+
+    fn ulps_eq(&self, other: &Self, epsilon: Self::Epsilon, max_ulps: u32) -> bool {
+        ApproxVec::from(self.center).ulps_eq(&ApproxVec::from(other.center), epsilon, max_ulps)
+		&& ApproxVec::from(self.axis1).ulps_eq(&ApproxVec::from(other.axis1), epsilon, max_ulps)
+		&& ApproxVec::from(self.axis2).ulps_eq(&ApproxVec::from(other.axis2), epsilon, max_ulps)
+		&& self.radius.ulps_eq(&other.radius, epsilon, max_ulps)
+		&& self.angle.ulps_eq(&other.angle, epsilon, max_ulps)
+		&& self.arc_len.ulps_eq(&other.arc_len, epsilon, max_ulps)
     }
 }
 
@@ -157,6 +206,8 @@ mod methods {
 mod traits {
 
 	use super::*;
+	use std::f32::consts::PI;
+	use approx::{assert_abs_diff_eq, assert_abs_diff_ne, assert_relative_eq, assert_relative_ne, assert_ulps_eq, assert_ulps_ne};
 
 	mod curve {
 
@@ -197,5 +248,35 @@ mod traits {
 				assert_ulps_eq!(ApproxVec::X, tan.into());
 			}
 		}
+	}
+
+	#[test]
+	fn abs_diff_eq() {
+		let a = Arc::from_points(Vec3::new(-2.0, 0.0, 0.0), -Vec3::Z, Vec3::new(0.0, 0.0, -2.0));
+		let b = Arc::from_points(Vec3::new(2.0, 0.0, 0.0), -Vec3::Z, Vec3::new(0.0, 0.0, -2.0));
+		let c = Arc::new(Vec3::ZERO, Vec3::X, -Vec3::Z, 2.0, PI / 2.0, PI);
+		assert_abs_diff_ne!(a, b);
+		assert_abs_diff_ne!(a, c);
+		assert_abs_diff_eq!(b, c);
+	}
+
+	#[test]
+	fn relative_eq() {
+		let a = Arc::from_points(Vec3::new(-2.0, 0.0, 0.0), -Vec3::Z, Vec3::new(0.0, 0.0, -2.0));
+		let b = Arc::from_points(Vec3::new(2.0, 0.0, 0.0), -Vec3::Z, Vec3::new(0.0, 0.0, -2.0));
+		let c = Arc::new(Vec3::ZERO, Vec3::X, -Vec3::Z, 2.0, PI / 2.0, PI);
+		assert_relative_ne!(a, b);
+		assert_relative_ne!(a, c);
+		assert_relative_eq!(b, c);
+	}
+
+	#[test]
+	fn ulps_eq() {
+		let a = Arc::from_points(Vec3::new(-2.0, 0.0, 0.0), -Vec3::Z, Vec3::new(0.0, 0.0, -2.0));
+		let b = Arc::from_points(Vec3::new(2.0, 0.0, 0.0), -Vec3::Z, Vec3::new(0.0, 0.0, -2.0));
+		let c = Arc::new(Vec3::ZERO, Vec3::X, -Vec3::Z, 2.0, PI / 2.0, PI);
+		assert_ulps_ne!(a, b);
+		assert_ulps_ne!(a, c);
+		assert_ulps_eq!(b, c);
 	}
 }
