@@ -63,6 +63,18 @@ impl Arc {
 
 		Self{ center, axis1, axis2, radius, angle, arc_len }
 	}
+
+	pub fn arc_len(&self) -> f32 {
+		self.arc_len
+	}
+
+	pub fn angle(&self) -> f32 {
+		self.angle
+	}
+
+	pub fn set_angle(&mut self, angle: f32) {
+		self.angle = angle;
+	}
 }
 
 impl Curve for Arc {
@@ -192,6 +204,44 @@ mod methods {
 			assert_ulps_eq!(15.0, arc.radius);
 			assert_ulps_eq!(PI / 2.0, arc.angle);
 			assert_ulps_eq!(PI / 2.0 * 15.0, arc.arc_len);
+		}
+
+		#[test]
+		fn off_center_2() {
+			let arc = Arc::from_points(Vec3::new(-2.0, 0.0, 2.0), -Vec3::Z, Vec3::new(-0.5, 0.0, 0.5));
+			assert_ulps_eq!(ApproxVec::new(-0.5, 0.0, 2.0), arc.center.into());
+			assert_ulps_eq!(-ApproxVec::X, arc.axis1.into());
+			assert_ulps_eq!(-ApproxVec::Z, arc.axis2.into());
+			assert_ulps_eq!(1.5, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0 * 1.5, arc.arc_len);
+
+			let arc = Arc::from_points(Vec3::new(-0.5, 0.0, 0.5), -Vec3::X, Vec3::new(-2.0, 0.0, 2.0));
+			assert_ulps_eq!(ApproxVec::new(-0.5, 0.0, 2.0), arc.center.into());
+			assert_ulps_eq!(-ApproxVec::Z, arc.axis1.into());
+			assert_ulps_eq!(-ApproxVec::X, arc.axis2.into());
+			assert_ulps_eq!(1.5, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0 * 1.5, arc.arc_len);
+		}
+
+		#[test]
+		fn off_center_1() {
+			let arc = Arc::from_points(Vec3::new(1.0, 0.0, -1.0), Vec3::Z, Vec3::new(-0.5, 0.0, 0.5));
+			assert_ulps_eq!(ApproxVec::new(-0.5, 0.0, -1.0), arc.center.into());
+			assert_ulps_eq!(ApproxVec::X, arc.axis1.into());
+			assert_ulps_eq!(ApproxVec::Z, arc.axis2.into());
+			assert_ulps_eq!(1.5, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0 * 1.5, arc.arc_len);
+
+			let arc = Arc::from_points(Vec3::new(-0.5, 0.0, 0.5), Vec3::X, Vec3::new(1.0, 0.0, -1.0));
+			assert_ulps_eq!(ApproxVec::new(-0.5, 0.0, -1.0), arc.center.into());
+			assert_ulps_eq!(ApproxVec::Z, arc.axis1.into());
+			assert_ulps_eq!(ApproxVec::X, arc.axis2.into());
+			assert_ulps_eq!(1.5, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0 * 1.5, arc.arc_len);
 		}
 
 		#[test]
