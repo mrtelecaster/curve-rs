@@ -4,6 +4,7 @@
 use bevy::prelude::Vec3;
 
 mod arc; pub use arc::Arc;
+mod biarc; pub use biarc::BiArc;
 mod line; pub use line::LinearCurve;
 mod vec; pub use vec::ApproxVec;
 
