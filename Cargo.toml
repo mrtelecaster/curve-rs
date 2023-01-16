@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 approx = "*"
+bevy = "0.9.1"
+lerp = "*"
