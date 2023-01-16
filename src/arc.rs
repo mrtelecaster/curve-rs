@@ -154,6 +154,110 @@ mod methods {
 		use crate::vec::ApproxVec;
 
 		#[test]
+		fn from_origin() {
+
+			// close right clockwise
+			let arc = Arc::from_points(Vec3::ZERO, Vec3::X, Vec3::new(1.0, 0.0, 1.0));
+			assert_ulps_eq!(ApproxVec::new(0.0, 0.0, 1.0), arc.center.into());
+			assert_ulps_eq!(-ApproxVec::Z, arc.axis1.into());
+			assert_ulps_eq!(ApproxVec::X, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+			let arc = Arc::from_points(Vec3::new(1.0, 0.0, 1.0), -Vec3::Z, Vec3::ZERO);
+			assert_ulps_eq!(ApproxVec::new(0.0, 0.0, 1.0), arc.center.into());
+			assert_ulps_eq!(ApproxVec::X, arc.axis1.into());
+			assert_ulps_eq!(-ApproxVec::Z, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+
+			// close right counterclockwise
+			let arc = Arc::from_points(Vec3::ZERO, Vec3::Z, Vec3::new(1.0, 0.0, 1.0));
+			assert_ulps_eq!(ApproxVec::new(1.0, 0.0, 0.0), arc.center.into());
+			assert_ulps_eq!(-ApproxVec::X, arc.axis1.into());
+			assert_ulps_eq!(ApproxVec::Z, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+			let arc = Arc::from_points(Vec3::new(1.0, 0.0, 1.0), -Vec3::X, Vec3::ZERO);
+			assert_ulps_eq!(ApproxVec::new(1.0, 0.0, 0.0), arc.center.into());
+			assert_ulps_eq!(ApproxVec::Z, arc.axis1.into());
+			assert_ulps_eq!(-ApproxVec::X, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+		}
+
+		#[test]
+		fn around_origin() {
+
+			// close right arcs
+			let arc = Arc::from_points(Vec3::Z, Vec3::X, Vec3::X);
+			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
+			assert_ulps_eq!(ApproxVec::Z, arc.axis1.into());
+			assert_ulps_eq!(ApproxVec::X, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+			let arc = Arc::from_points(Vec3::X, Vec3::Z, Vec3::Z);
+			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
+			assert_ulps_eq!(ApproxVec::X, arc.axis1.into());
+			assert_ulps_eq!(ApproxVec::Z, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+
+			// far right arcs
+			let arc = Arc::from_points(-Vec3::Z, Vec3::X, Vec3::X);
+			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
+			assert_ulps_eq!(-ApproxVec::Z, arc.axis1.into());
+			assert_ulps_eq!(ApproxVec::X, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+			let arc = Arc::from_points(Vec3::X, -Vec3::Z, -Vec3::Z);
+			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
+			assert_ulps_eq!(ApproxVec::X, arc.axis1.into());
+			assert_ulps_eq!(-ApproxVec::Z, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+
+			// close left arcs
+			let arc = Arc::from_points(Vec3::Z, -Vec3::X, -Vec3::X);
+			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
+			assert_ulps_eq!(ApproxVec::Z, arc.axis1.into());
+			assert_ulps_eq!(-ApproxVec::X, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+			let arc = Arc::from_points(-Vec3::X, Vec3::Z, Vec3::Z);
+			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
+			assert_ulps_eq!(-ApproxVec::X, arc.axis1.into());
+			assert_ulps_eq!(ApproxVec::Z, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+
+			// far left arcs
+			let arc = Arc::from_points(-Vec3::Z, -Vec3::X, -Vec3::X);
+			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
+			assert_ulps_eq!(-ApproxVec::Z, arc.axis1.into());
+			assert_ulps_eq!(-ApproxVec::X, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+			let arc = Arc::from_points(-Vec3::X, -Vec3::Z, Vec3::Z);
+			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
+			assert_ulps_eq!(-ApproxVec::X, arc.axis1.into());
+			assert_ulps_eq!(-ApproxVec::Z, arc.axis2.into());
+			assert_ulps_eq!(1.0, arc.radius);
+			assert_ulps_eq!(PI / 2.0, arc.angle);
+			assert_ulps_eq!(PI / 2.0, arc.arc_len);
+		}
+
+		#[test]
 		fn straight_line() {
 			let arc = Arc::from_points(-Vec3::X, Vec3::X, Vec3::X);
 			assert_ulps_eq!(ApproxVec::ZERO, arc.center.into());
